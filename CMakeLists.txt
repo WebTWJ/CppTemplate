@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(CPPTemplate)
-
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project(CPPTemplate)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -13,16 +13,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
-file(GLOB SOURCES "src/*.cpp")
-
-add_library(MyProjectLib ${SOURCES})
-
-add_executable(main src/main.cpp)
-
-target_link_libraries(main PRIVATE MyProjectLib)
+add_executable(main
+    src/main.cpp
+    src/Greeter.cpp
+)
 
 enable_testing()
 
-add_subdirectory(tests)
+file(GLOB TEST_SOURCES "tests/*.cpp")
+
+add_executable(runTests ${TEST_SOURCES})
+
+target_link_libraries(runTests PRIVATE Catch2::Catch2WithMain)
+
+add_test(NAME MyProjectTests COMMAND runTests)
